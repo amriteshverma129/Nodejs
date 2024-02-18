@@ -4,12 +4,13 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-const Product = require("./models/productModel");
+require("dotenv").config();
 const port = 3000;
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const authenticateRouter = require("./routes/authenticate");
+const emailRouter = require("./routes/emailService");
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/authenticate", authenticateRouter);
+app.use("/emailService", emailRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -46,9 +48,7 @@ app.use(function (err, req, res, next) {
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(
-    "mongodb+srv://amriteshverma129:GaneshJi98@cluster0.gdhygef.mongodb.net/NodeAPI?retryWrites=true&w=majority"
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("mongoose is connected");
     app.listen(port, () => {
